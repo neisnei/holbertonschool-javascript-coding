@@ -1,11 +1,14 @@
 #!/usr/bin/node
 
-const fs = require('fs');
+def read_file(file_path):
+  """Reads the contents of a file and prints it to the console.
 
-fs.readFile(process.argv[2], 'utf-8', (err, data) => {
-  if (err) {
-    console.log(err);
-  } else {
-    console.log(data);
-  }
-});
+  Args:
+    file_path: Path to the file to be read.
+  """
+  try:
+    with open(file_path, "r", encoding="utf-8") as file:
+      content = file.read()
+      print(content)
+  except Exception as error:
+    print(error)
