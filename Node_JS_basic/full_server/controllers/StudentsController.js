@@ -1,34 +1,40 @@
 const readDatabase = require('../utils');
 
-class StudentsController {
-    static getAllStudents(request, response) {
-        response.statusCode = 200;
-        response.setHeader('Content-Type', 'text/plain');
-        response.write('This is the list of our students\n');
-        readDatabase('./database.csv').then((data) => {
-            response.write(`Number of students in CS: ${data['CS'].length}. List: ${data['CS'].join(', ')}\n`);
-            response.write(`Number of students in SWE: ${data['SWE'].length}. List: ${data['SWE'].join(', ')}\n`);
-            response.end();
-        }).catch((err) => res.write(err.message))
-        .finally(() => {
-          res.end();
-        });
-    }
-    static getAllStudentsByMajor(request, response) {
-        response.statusCode = 200;
-        response.setHeader('Content-Type', 'text/plain');
-        let { major } = request.params;
-        if (major !== 'CS' && major !== 'SWE') {
-            response.statusCode = 500;
-            response.write('Major parameter must be CS or SWE\n');
-            response.end();
-            return;
-        }
-        readDatabase('./database.csv').then((data) => {
-            response.write(`List: ${data[major].join(', ')}\n`);
-            response.end();
-        }).catch((err) => response.send(err.message));
-    }
-}
+export default class StudentsController {
+  static getAllStudents(request, response, DB) {
+    readDatabase(DB)
+      .then((data) => {
+        const msg = 'This is the list of our students\n';
+        const newData = msg + data;
+        response.send(200, newData.slice(0, -1));
+      })
+      .catch((error) => {
+        response.send(500, error.message);
+      });
+  }
 
-export default StudentsController;
+  static getAllStudentsByMajor(request, response, DB) {
+    const { major } = request.params;
+
+    if (major !== 'CS' && major !== 'SWE') {
+      response.send(500, 'Major parameter must be CS or SWE');
+    } else {
+      readDatabase(DB)
+        .then((fields) => {
+          const list = fields.split('\n');
+          const [field1, field2] = list.slice(1, 3);
+
+          let students;
+          if (major === 'CS') {
+            students = field1;
+          } else {
+            students = field2;
+          }
+          students = students.split('. ');
+
+          response.send(200, `${students[1]}`);
+        })
+        .catch(() => response.send(500, 'Cannot load the database'));
+    }
+  }
+}
