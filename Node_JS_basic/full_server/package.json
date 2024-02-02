@@ -1,0 +1,14 @@
+{
+  "name": "full_server",
+  "version": "1.0.0",
+  "description": "Full server with controllers, routes, and utils",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon --exec babel-node --presets babel-preset-env ./full_server/server.js ./database.csv"
+  },
+  "dependencies": {
+    "babel-preset-env": "^1.7.0",
+    "express": "^4.17.1",
+    "fs": "^0.0.1-security"
+  }
+}
