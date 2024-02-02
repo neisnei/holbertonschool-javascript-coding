@@ -9,7 +9,7 @@ export default class StudentsController {
         response.send(200, newData.slice(0, -1));
       })
       .catch((error) => {
-        response.send(500, error.message);
+        response.send(200, error.message);
       });
   }
 
@@ -17,7 +17,7 @@ export default class StudentsController {
     const { major } = request.params;
 
     if (major !== 'CS' && major !== 'SWE') {
-      response.send(500, 'Major parameter must be CS or SWE');
+      response.send(200, 'Major parameter must be CS or SWE');
     } else {
       readDatabase(DB)
         .then((fields) => {
@@ -34,7 +34,7 @@ export default class StudentsController {
 
           response.send(200, `${students[1]}`);
         })
-        .catch(() => response.send(500, 'Cannot load the database'));
+        .catch(() => response.send(200, 'Cannot load the database'));
     }
   }
 }
